@@ -1,4 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { GetAllUserDto } from './Dto/get-All-User.dto';
 import { User } from './user.entity';
 import { userService } from './user.Service';
@@ -10,5 +11,11 @@ export class UserController {
   @Get()
   async GetAllUser(): Promise<GetAllUserDto[]> {
     return await this.userService.findAll();
+  }
+
+  @Post('/validate')
+  async findUser(@Req() request: Request) {
+    const { email } = request.body;
+    return await this.userService.ValidateEmail(email);
   }
 }

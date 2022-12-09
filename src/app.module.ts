@@ -7,6 +7,8 @@ import * as dotenv from 'dotenv';
 import { UserController } from './user/user.controller';
 import { userService } from './user/user.Service';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { User } from './user/user.entity';
 
 dotenv.config({
   path: `.env.local`,
@@ -21,9 +23,13 @@ dotenv.config({
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/**/*.entity.{js,ts}'],
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
