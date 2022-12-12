@@ -18,4 +18,10 @@ export class UserController {
     const { email } = request.body;
     return await this.userService.ValidateEmail(email);
   }
+
+  @Post('/join')
+  async createUser(@Req() request: Request) {
+    const { email, name, password } = request.body;
+    return await this.userService.createUser(email, name, password);
+  }
 }

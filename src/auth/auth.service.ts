@@ -1,9 +1,14 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { UserRepository } from 'src/user/user.repository';
-
+import * as bcrypt from 'bcrypt';
+import { hashPassword, isHashValid } from 'src/util/bcypt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -18,8 +23,15 @@ export class AuthService {
       });
 
       if (isEmail) {
-        const payload = { email: email, sub: '0' };
-        return this.jwtService.sign(payload);
+        const comparePassword = await isHashValid(password, isEmail.password);
+
+        if (comparePassword) {
+          const payload = { email: email, sub: '0' };
+
+          return this.jwtService.sign(payload);
+        }
+
+        throw new InternalServerErrorException('비밀번호가 같지 않습니다');
       }
 
       throw new UnauthorizedException('인증되지 않은 사용자입니다');
